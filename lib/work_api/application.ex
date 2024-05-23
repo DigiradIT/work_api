@@ -17,9 +17,12 @@ defmodule WorkApi.Application do
       # Start a worker by calling: WorkApi.Worker.start_link(arg)
       # {WorkApi.Worker, arg},
       # Start to serve requests, typically the last entry
-      WorkApiWeb.Endpoint
+      WorkApiWeb.Endpoint,
+      {Oban, Application.fetch_env!(:work_api, Oban)}
     ]
 
+    events = [[:oban, :job, :start], [:oban, :job, :stop], [:oban, :job, :exception]]
+    :telemetry.attach_many("oban-logger", events, &WorkApi.ObanLogger.handle_event/4, [])
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: WorkApi.Supervisor]

@@ -20,6 +20,9 @@ config :work_api, WorkApiWeb.Endpoint,
   secret_key_base: "nYbIPTRjQnCkt36Q44fYcSM1u3Wm2vJEal8OsMHXwczDRQXpsI8y8NdYsGWtITqV",
   server: false
 
+# Oban test config
+config :work_api, Oban, testing: :inline
+
 # In test we don't send emails.
 config :work_api, WorkApi.Mailer, adapter: Swoosh.Adapters.Test
 

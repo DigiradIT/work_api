@@ -8,4 +8,12 @@ defmodule WorkApiWeb.WorkApi do
   def echo(conn, _params) do
     json(conn, conn.body_params)
   end
+
+  def touch(conn, _params) do
+    conn.body_params
+    |> WorkApi.SimpleJob.new()
+    |> Oban.insert()
+
+    resp(conn, 200, "ok")
+  end
 end

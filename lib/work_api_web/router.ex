@@ -21,6 +21,7 @@ defmodule WorkApiWeb.Router do
 
     get "/", WorkApi, :root
     post "/echo", WorkApi, :echo
+    post "/touch", WorkApi, :touch
   end
 
   # Other scopes may use custom stacks.

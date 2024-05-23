@@ -11,6 +11,12 @@ config :work_api,
   ecto_repos: [WorkApi.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+# Oban config
+config :work_api, Oban,
+  engine: Oban.Engines.Basic,
+  queues: [commands: 5],
+  repo: WorkApi.Repo
+
 # Configures the endpoint
 config :work_api, WorkApiWeb.Endpoint,
   url: [host: "localhost"],
