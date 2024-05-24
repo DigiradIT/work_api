@@ -1,5 +1,6 @@
 defmodule WorkApiWeb.WorkApi do
   use WorkApiWeb, :controller
+  alias Ecto.Changeset, as: CS
 
   def root(conn, _params) do
     resp(conn, 200, Jason.encode!(%{hello: "you made it"}))
@@ -10,10 +11,57 @@ defmodule WorkApiWeb.WorkApi do
   end
 
   def touch(conn, _params) do
-    conn.body_params
-    |> WorkApi.SimpleJob.new()
-    |> Oban.insert()
+    touch_command = %{
+      fileName: :string,
+      path: :string
+    }
 
-    resp(conn, 200, "ok")
+    inbond_command = Map.merge(%{"path" => "./test_output"}, conn.body_params)
+
+    cs =
+      {%{}, touch_command}
+      |> CS.cast(inbond_command, Map.keys(touch_command))
+      |> CS.validate_required(:fileName)
+      |> CS.validate_length(:fileName, min: 1, max: 25)
+
+    IO.inspect(cs.changes, label: "the changes")
+
+    if cs.valid? do
+      cs.changes
+      |> WorkApi.SimpleJob.new()
+      |> Oban.insert()
+
+      resp(conn, 200, "ok")
+    else
+      resp(conn, 400, "invalid body")
+    end
+  end
+
+  def append(conn, _params) do
+    append_command = %{
+      fileName: :string,
+      path: :string,
+      content: :string
+    }
+
+    params = Map.merge(%{"path" => "./test_output"}, conn.body_params)
+
+    cs =
+      {%{}, append_command}
+      |> CS.cast(params, Map.keys(append_command))
+      |> CS.validate_required(:fileName)
+      |> CS.validate_required(:content)
+      |> CS.validate_length(:fileName, min: 1, max: 25)
+      |> CS.validate_length(:content, min: 1)
+
+    if cs.valid? do
+      cs.changes
+      |> WorkApi.AppendJob.new()
+      |> Oban.insert()
+
+      resp(conn, 200, "ok")
+    else
+      resp(conn, 400, "invalid body")
+    end
   end
 end
