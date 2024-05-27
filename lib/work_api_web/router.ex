@@ -13,7 +13,7 @@ defmodule WorkApiWeb.Router do
   pipeline :api do
     plug :accepts, ["json"]
     plug Plug.Parsers, parsers: [{:json, json_decoder: Jason}]
-    plug :basic_auth, username: "dirk", password: "woof"
+    plug WorkApiWeb.Plugs.Auth
   end
 
   scope "/", WorkApiWeb do
