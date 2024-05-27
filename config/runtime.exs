@@ -28,6 +28,8 @@ if config_env() == :prod do
       For example: ecto://USER:PASS@HOST/DATABASE
       """
 
+  config :work_api, :api_user, System.fetch_env!("API_USER")
+  config :work_api, :api_password, System.fetch_env!("API_PASSWORD")
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :work_api, WorkApi.Repo,

@@ -62,6 +62,8 @@ config :work_api, WorkApiWeb.Endpoint,
     ]
   ]
 
+config :work_api, :api_user, "dirk"
+config :work_api, :api_password, "woof"
 # Enable dev routes for dashboard and mailbox
 config :work_api, dev_routes: true
 
