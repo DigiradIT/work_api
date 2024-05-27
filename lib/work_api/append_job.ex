@@ -6,7 +6,7 @@ defmodule WorkApi.AppendJob do
     file_name = args["fileName"]
     file_path = args["path"]
     content = args["content"]
-    System.cmd("pwsh", ["./ps_scripts/write_to_file.ps1", content, file_name, file_path])
+    {_, 0} = System.cmd("pwsh", ["./ps_scripts/write_to_file.ps1", content, file_name, file_path])
     :ok
   end
 end
