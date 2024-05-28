@@ -51,7 +51,7 @@ if config_env() == :prod do
     """)
 
   api_password =
-    fetch_env_or_raise.("API_password", """
+    fetch_env_or_raise.("API_PASSWORD", """
     environment variable API_PASSWORD is missing.
     API_PASSWORD should be set to the password for authenticating
     to the API.
