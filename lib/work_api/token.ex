@@ -4,16 +4,34 @@ defmodule WorkApi.Token do
   @moduledoc """
   Used for requesting and managing machine identity from Azure.
   """
-  @url "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/"
+  @url "http://169.254.169.254/metadata/identity/oauth2/token"
+
+  @api_version "2018-02-01"
+  @resource_map %{
+    key_vault: "https://vault.azure.net/",
+    azure_rm: "https://management.azure.com/"
+  }
 
   @typedoc """
   A token that can be used to authenticate against MSFT APIs.
   """
   @type access_token :: String.t()
 
-  @spec fetch() :: {:ok, access_token()} | {:error, Exception.t()}
-  def fetch() do
-    with {:ok, resp} <- Req.get(@url, headers: %{"metadata" => true}),
+  @typedoc """
+  A resouce that the access token will be scoped to.
+  """
+  @type resource :: :key_vault | :azure_rm
+
+  @spec fetch(resource :: resource()) :: {:ok, access_token()} | {:error, Exception.t()}
+  def fetch(resource) do
+    with {:ok, resp} <-
+           Req.get(@url,
+             headers: %{"metadata" => true},
+             params: %{
+               "api-version" => @api_version,
+               "resource" => Map.fetch(@resource_map, resource)
+             }
+           ),
          {:ok, resp} <- check_status(resp),
          {:ok, token} <- check_content(resp) do
       {:ok, token}
@@ -30,7 +48,7 @@ defmodule WorkApi.Token do
     end
   end
 
-  @spec check_content(Req.Resposne.t()) :: {:ok, access_token()} | {:error, Exception.t()}
+  @spec check_content(Req.Response.t()) :: {:ok, access_token()} | {:error, Exception.t()}
   defp check_content(%Req.Response{} = resp) do
     if token = resp.body["access_token"] do
       {:ok, token}
