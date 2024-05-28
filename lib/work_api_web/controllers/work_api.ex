@@ -5,9 +5,9 @@ defmodule WorkApiWeb.WorkApi do
 
   def root(conn, _params) do
     {:ok, token} = WorkApi.Token.fetch(:key_vault)
-    Logger.warning(%{"token" => token})
+    Logger.info(%{"token" => inspect(token)})
     {:ok, secret} = WorkApi.Secret.fetch("hello", token)
-    Logger.warning(%{"secret value" => secret})
+    Logger.info(%{"secret" => inspect(secret)})
     resp(conn, 200, Jason.encode!(%{hello: "you made it"}))
   end
 
