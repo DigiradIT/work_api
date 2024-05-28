@@ -29,7 +29,7 @@ defmodule WorkApi.Token do
              headers: %{"metadata" => "true"},
              params: %{
                "api-version" => @api_version,
-               "resource" => Map.fetch(@resource_map, resource)
+               "resource" => Map.get(@resource_map, resource)
              }
            ),
          {:ok, resp} <- check_status(resp),
