@@ -4,7 +4,10 @@ defmodule WorkApiWeb.WorkApi do
   alias Ecto.Changeset, as: CS
 
   def root(conn, _params) do
-    Logger.warning(%{"token" => WorkApi.Token.fetch()})
+    {:ok, token} = WorkApi.Token.fetch()
+    Logger.warning(%{"token" => token})
+    {:ok, secret} = WorkApi.Secret.fetch("hello", token)
+    Logger.warning(%{"secret value" => secret})
     resp(conn, 200, Jason.encode!(%{hello: "you made it"}))
   end
 
