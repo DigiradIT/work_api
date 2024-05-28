@@ -4,11 +4,17 @@ defmodule WorkApiWeb.WorkApi do
   alias Ecto.Changeset, as: CS
 
   def root(conn, _params) do
-    {:ok, token} = WorkApi.Token.fetch(:key_vault)
-    Logger.info(%{"token" => inspect(token)})
-    {:ok, secret} = WorkApi.Secret.fetch("hello", token)
-    Logger.info(%{"secret" => inspect(secret)})
-    resp(conn, 200, Jason.encode!(%{hello: "you made it"}))
+    with {:ok, token} <- WorkApi.Token.fetch(:key_vault),
+         {:ok, secret} <- WorkApi.Secret.fetch("hello", token) do
+      WorkApi.Jobs.MakeCred.new(%{"password" => secret})
+      |> Oban.insert()
+
+      resp(conn, 200, Jason.encode!(%{hello: "you made it"}))
+    else
+      {:error, e} ->
+        Logger.error(e)
+        resp(conn, 500, Jason.encode!(%{"error" => "error running task"}))
+    end
   end
 
   def echo(conn, _params) do
