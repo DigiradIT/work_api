@@ -8,8 +8,8 @@ defmodule WorkApi.Token do
 
   @api_version "2018-02-01"
   @resource_map %{
-    key_vault: "https://vault.azure.net/",
-    azure_rm: "https://management.azure.com/"
+    key_vault: "https://vault.azure.net",
+    azure_rm: "https://management.azure.com"
   }
 
   @typedoc """
