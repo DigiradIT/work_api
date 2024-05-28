@@ -26,7 +26,7 @@ defmodule WorkApi.Token do
   def fetch(resource) do
     with {:ok, resp} <-
            Req.get(@url,
-             headers: %{"metadata" => true},
+             headers: %{"metadata" => "true"},
              params: %{
                "api-version" => @api_version,
                "resource" => Map.fetch(@resource_map, resource)
