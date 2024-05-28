@@ -59,7 +59,9 @@ defmodule WorkApi.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:oban, "~> 2.17"},
-      {:req, "~> 0.5.0"}
+      {:req, "~> 0.5.0"},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 
