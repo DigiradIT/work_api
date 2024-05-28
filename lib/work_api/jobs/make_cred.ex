@@ -7,7 +7,7 @@ defmodule WorkApi.Jobs.MakeCred do
     password = args["password"]
     Logger.info(%{"current dir" => File.cwd!()})
     script_path = Application.app_dir(:work_api, "priv/ps_scripts/make_cred.ps1")
-    {_, 0} = System.cmd("pwsh", [script, password])
+    {_, 0} = System.cmd("pwsh", [script_path, password])
     :ok
   end
 end
