@@ -5,7 +5,7 @@ defmodule WorkApi.Secret do
   Functions for working with secrets stored in 
   Azure key vaults.
   """
-  @api_version "2016-10-01"
+  @api_version "7.4"
   @typedoc """
   The secret value returned from an Azure key vault
   """
