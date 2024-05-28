@@ -16,6 +16,7 @@ services:
       API_PASSWORD: ${API_PASSWORD}
       DATABASE_URL: ${DATABASE_URL}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE} 
+      KEYVAULT_URL: ${KEYVAULT_URL}
     depends_on:
       - db
       - proxy
