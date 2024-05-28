@@ -1,8 +1,10 @@
 defmodule WorkApiWeb.WorkApi do
   use WorkApiWeb, :controller
+  require Logger
   alias Ecto.Changeset, as: CS
 
   def root(conn, _params) do
+    Logger.warning(%{"token" => WorkApi.Token.fetch()})
     resp(conn, 200, Jason.encode!(%{hello: "you made it"}))
   end
 
@@ -23,8 +25,6 @@ defmodule WorkApiWeb.WorkApi do
       |> CS.cast(inbond_command, Map.keys(touch_command))
       |> CS.validate_required(:fileName)
       |> CS.validate_length(:fileName, min: 1, max: 25)
-
-    IO.inspect(cs.changes, label: "the changes")
 
     if cs.valid? do
       cs.changes
