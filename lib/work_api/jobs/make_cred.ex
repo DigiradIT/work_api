@@ -1,5 +1,6 @@
 defmodule WorkApi.Jobs.MakeCred do
   use Oban.Worker, queue: :commands
+  require Logger
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: args}) do
