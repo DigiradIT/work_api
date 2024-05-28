@@ -21,6 +21,14 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
+  fetch_env_or_raise = fn env, message ->
+    if e = System.get_env(env) do
+      e
+    else
+      raise message
+    end
+  end
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """
@@ -28,8 +36,30 @@ if config_env() == :prod do
       For example: ecto://USER:PASS@HOST/DATABASE
       """
 
-  config :work_api, :api_user, System.fetch_env!("API_USER")
-  config :work_api, :api_password, System.fetch_env!("API_PASSWORD")
+  keyvault_url =
+    fetch_env_or_raise.("KEYVAULT_URL", """
+      environment variable KEYVAULT_URL is missing.
+      Keyvault url should be the url to the keyvault storing
+      secrets for the task runner.
+    """)
+
+  api_user =
+    fetch_env_or_raise.("API_USER", """
+    environment variable API_USER is missing.
+    API_USER should be set to the username for authenticating
+    to the API.
+    """)
+
+  api_password =
+    fetch_env_or_raise.("API_password", """
+    environment variable API_PASSWORD is missing.
+    API_PASSWORD should be set to the password for authenticating
+    to the API.
+    """)
+
+  config :work_api, :api_user, api_user
+  config :work_api, :api_password, api_password
+  config :work_api, :keyvault_url, keyvault_url
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :work_api, WorkApi.Repo,
