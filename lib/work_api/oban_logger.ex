@@ -1,6 +1,10 @@
 defmodule WorkApi.ObanLogger do
   require Logger
 
+  @moduledoc """
+  Logging configuration for Oban.
+  """
+
   @type oban_event :: atom()
   @spec handle_event(oban_event :: list(oban_event()), map(), map(), any()) :: any()
   def handle_event(event, measure, meta, _) do

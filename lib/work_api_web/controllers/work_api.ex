@@ -1,20 +1,17 @@
 defmodule WorkApiWeb.WorkApi do
+  @moduledoc """
+  Controller for API requests that request that tasks be run.
+  This controller is responsible for validating the instructions 
+  passed from the API caller and creating the Oban jobs that will 
+  execute the query.
+  """
+
   use WorkApiWeb, :controller
   require Logger
   alias Ecto.Changeset, as: CS
 
   def root(conn, _params) do
-    with {:ok, token} <- WorkApi.Token.fetch(:key_vault),
-         {:ok, secret} <- WorkApi.Secret.fetch("hello", token) do
-      WorkApi.Jobs.MakeCred.new(%{"password" => secret})
-      |> Oban.insert()
-
-      resp(conn, 200, Jason.encode!(%{hello: "you made it"}))
-    else
-      {:error, e} ->
-        Logger.error(e)
-        resp(conn, 500, Jason.encode!(%{"error" => "error running task"}))
-    end
+    resp(conn, 200, Jason.encode!(%{hello: "you made it"}))
   end
 
   def echo(conn, _params) do
@@ -29,6 +26,7 @@ defmodule WorkApiWeb.WorkApi do
     }
 
     key_name = Application.get_env(:work_api, :m365_secret_name)
+
     with {:ok, token} <- WorkApi.Token.fetch(:key_vault),
          {:ok, secret} <- WorkApi.Secret.fetch(key_name, token) do
       cs =
@@ -38,8 +36,10 @@ defmodule WorkApiWeb.WorkApi do
 
       if cs.valid? do
         user = Application.get_env(:work_api, :m365_user)
+
         cs.changes
         |> Map.put(:password, secret)
+        |> Map.put(:username, user)
         |> WorkApi.Jobs.AddMailAlias.new()
         |> Oban.insert()
 
@@ -51,59 +51,6 @@ defmodule WorkApiWeb.WorkApi do
       {:error, e} ->
         Logger.error(e)
         resp(conn, 500, Jason.encode!(%{"error" => "error running task"}))
-    end
-  end
-
-  def touch(conn, _params) do
-    touch_command = %{
-      fileName: :string,
-      path: :string
-    }
-
-    inbond_command = Map.merge(%{"path" => "./test_output"}, conn.body_params)
-
-    cs =
-      {%{}, touch_command}
-      |> CS.cast(inbond_command, Map.keys(touch_command))
-      |> CS.validate_required(:fileName)
-      |> CS.validate_length(:fileName, min: 1, max: 25)
-
-    if cs.valid? do
-      cs.changes
-      |> WorkApi.SimpleJob.new()
-      |> Oban.insert()
-
-      resp(conn, 200, "ok")
-    else
-      resp(conn, 400, "invalid body")
-    end
-  end
-
-  def append(conn, _params) do
-    append_command = %{
-      fileName: :string,
-      path: :string,
-      content: :string
-    }
-
-    params = Map.merge(%{"path" => "./test_output"}, conn.body_params)
-
-    cs =
-      {%{}, append_command}
-      |> CS.cast(params, Map.keys(append_command))
-      |> CS.validate_required(:fileName)
-      |> CS.validate_required(:content)
-      |> CS.validate_length(:fileName, min: 1, max: 25)
-      |> CS.validate_length(:content, min: 1)
-
-    if cs.valid? do
-      cs.changes
-      |> WorkApi.AppendJob.new()
-      |> Oban.insert()
-
-      resp(conn, 200, "ok")
-    else
-      resp(conn, 400, "invalid body")
     end
   end
 end

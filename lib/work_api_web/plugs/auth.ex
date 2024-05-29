@@ -1,4 +1,8 @@
 defmodule WorkApiWeb.Plugs.Auth do
+  @moduledoc """
+  Simple plug for dispatching to Plug.BasicAuth 
+  at run time.
+  """
   def init(opts), do: opts
 
   def call(conn, _opts) do

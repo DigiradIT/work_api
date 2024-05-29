@@ -1,4 +1,8 @@
 defmodule WorkApi.Jobs.AddMailAlias do
+  @moduledoc """
+  Task for adding an alias to an exiting M365 unified group.
+  This will **not** work for security or exchange groups.
+  """
   use Oban.Worker, queue: :commands
 
   @impl Oban.Worker

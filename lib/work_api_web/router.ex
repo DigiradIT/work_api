@@ -21,8 +21,6 @@ defmodule WorkApiWeb.Router do
 
     get "/", WorkApi, :root
     post "/echo", WorkApi, :echo
-    post "/touch", WorkApi, :touch
-    post "/append", WorkApi, :append
     post "/add_alias", WorkApi, :add_alias
   end
 
