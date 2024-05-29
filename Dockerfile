@@ -83,6 +83,12 @@ RUN wget -q "https://packages.microsoft.com/keys/microsoft.asc" -O- | apt-key ad
 RUN apt-get update && \
     apt-get install -y powershell
 
+#Install exchange management module 
+RUN pwsh -Command Install-Module -Name PSWSMan  && \
+    pwsh -Command Install-WSMan && \
+    pwsh -Command Set-ExecutionPolicy RemoteSigned && \
+    pwsh -Command Install-Module  ExchangeOnlineManagement -AcceptLicense
+
 
 # Set the locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
