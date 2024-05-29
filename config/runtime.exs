@@ -65,7 +65,7 @@ if config_env() == :prod do
     """)
 
   m365_secret_name =
-    fetch_env_or_raise("M365_SECRET_NAME", """
+    fetch_env_or_raise.("M365_SECRET_NAME", """
     environment variable M365_SECRET_NAME is missing.
     M365_SECRET_NAME should be set to the name for the
     secret containing the M365 user password.
