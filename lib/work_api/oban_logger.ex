@@ -8,16 +8,16 @@ defmodule WorkApi.ObanLogger do
 
     case event do
       [:oban, :job, :start] ->
-        Logger.debug(fmter.(:start, meta.worker, "started at: #{measure.system_time}"))
+        Logger.info(fmter.(:start, meta.worker, "started at: #{measure.system_time}"))
 
       [:oban, :job, :exceptioin] ->
         Logger.warning(fmter.(:exception, meta.worker, nil))
 
       [:oban, :job, :stop] ->
-        Logger.debug(fmter.(:stop, meta.worker, "duration: #{measure.duration}"))
+        Logger.info(fmter.(:stop, meta.worker, "duration: #{measure.duration}"))
 
       [:oban, :job, event] ->
-        Logger.debug(fmter.(event, meta.worker, nil))
+        Logger.info(fmter.(event, meta.worker, nil))
 
       event ->
         Logger.error("unknown oban logging event received #{inspect(event)}")
