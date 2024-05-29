@@ -35,11 +35,18 @@ defmodule WorkApiWeb.WorkApi do
       |> CS.validate_required([:group, :alias])
 
     if cs.valid? do
-      cs.changes
-      |> Map.put(:password, password)
-      |> Map.put(:username, username)
-      |> WorkApi.Jobs.AddMailAlias.new()
-      |> Oban.insert()
+      command =
+        cs.changes
+        |> Map.put(:password, password)
+        |> Map.put(:username, username)
+
+      Ecto.Multi.new()
+      |> Oban.insert(:add_job, WorkApi.Jobs.AddMailAlias.new(command))
+      |> Oban.insert(
+        :remove_job,
+        WorkApi.Jobs.RemoveMailAlias.new(command, schedule_in: 60 * 5)
+      )
+      |> WorkApi.Repo.transaction()
 
       resp(conn, 200, "ok")
     else
@@ -47,7 +54,7 @@ defmodule WorkApiWeb.WorkApi do
     end
   end
 
-  def fetch_o365_pass(conn, _opts) do
+  defp fetch_o365_pass(conn, _opts) do
     key_name = Application.get_env(:work_api, :m365_secret_name)
 
     with {:ok, token} <- WorkApi.Token.fetch(:key_vault),
