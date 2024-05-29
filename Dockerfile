@@ -84,10 +84,10 @@ RUN apt-get update && \
     apt-get install -y powershell
 
 #Install exchange management module 
-RUN pwsh -Command Install-Module -Name PSWSMan  && \
+RUN pwsh -Command Install-Module -Name PSWSMan -Confirm:$False -AcceptLicense  && \
     pwsh -Command Install-WSMan && \
     pwsh -Command Set-ExecutionPolicy RemoteSigned && \
-    pwsh -Command Install-Module  ExchangeOnlineManagement -AcceptLicense
+    pwsh -Command Install-Module  ExchangeOnlineManagement -Confirm:$False -AcceptLicense
 
 
 # Set the locale
