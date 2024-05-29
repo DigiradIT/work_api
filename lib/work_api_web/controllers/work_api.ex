@@ -21,6 +21,53 @@ defmodule WorkApiWeb.WorkApi do
     json(conn, conn.body_params)
   end
 
+  def add_alias(conn, _params) do
+    add_alias_command = %{
+      group: :string,
+      alias: :string,
+      password: :string
+    }
+
+    with {:ok, token} <- WorkApi.Token.fetch(:key_vault),
+         {:ok, secret} <- WorkApi.Secret.fetch("hello", token) do
+      conn = put_in(conn, [:body_params, "password"], secret)
+
+      cs =
+        {%{}, add_alias_command}
+        |> CS.cast(conn.body_params, Map.keys(add_alias_command))
+        |> CS.validate_required([:group, :alias])
+
+      if cs.valid? do
+        cs.changes
+        |> WorkApi.Jobs.AddMailAlias.new()
+        |> Oban.insert()
+
+        resp(conn, 200, "ok")
+      else
+        resp(conn, 400, "invalid body")
+      end
+    else
+      {:error, e} ->
+        Logger.error(e)
+        resp(conn, 500, Jason.encode!(%{"error" => "error running task"}))
+    end
+
+    cs =
+      {%{}, add_alias_command}
+      |> CS.cast(conn.body_params, Map.keys(add_alias_command))
+      |> CS.validate_required([:group, :alias])
+
+    if cs.valid? do
+      cs.changes
+      |> WorkApi.Jobs.AddMailAlias.new()
+      |> Oban.insert()
+
+      resp(conn, 200, "ok")
+    else
+      resp(conn, 400, "invalid body")
+    end
+  end
+
   def touch(conn, _params) do
     touch_command = %{
       fileName: :string,
