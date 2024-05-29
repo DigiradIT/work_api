@@ -1,7 +1,7 @@
 param([string]$userName, [string]$password, [string]$targetGroup, [string]$targetAlias)
 
 Import-Module ExchangeOnlineManagement
-Import-Module "./make_cred.psm1"
+Import-Module $pwd.Path + "/make_cred.psm1"
 
 $cred = New-Cred -userName $userName -password $password
 
