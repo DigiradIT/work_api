@@ -30,8 +30,6 @@ defmodule WorkApiWeb.WorkApi do
 
     with {:ok, token} <- WorkApi.Token.fetch(:key_vault),
          {:ok, secret} <- WorkApi.Secret.fetch("runner", token) do
-      Logger.info(%{"secret" => secret})
-
       cs =
         {%{}, add_alias_command}
         |> CS.cast(conn.body_params, Map.keys(add_alias_command))
@@ -40,7 +38,6 @@ defmodule WorkApiWeb.WorkApi do
       if cs.valid? do
         cs.changes
         |> Map.put(:password, secret)
-        |> IO.inspect(label: "args passed to add mail alias")
         |> WorkApi.Jobs.AddMailAlias.new()
         |> Oban.insert()
 
@@ -52,21 +49,6 @@ defmodule WorkApiWeb.WorkApi do
       {:error, e} ->
         Logger.error(e)
         resp(conn, 500, Jason.encode!(%{"error" => "error running task"}))
-    end
-
-    cs =
-      {%{}, add_alias_command}
-      |> CS.cast(conn.body_params, Map.keys(add_alias_command))
-      |> CS.validate_required([:group, :alias])
-
-    if cs.valid? do
-      cs.changes
-      |> WorkApi.Jobs.AddMailAlias.new()
-      |> Oban.insert()
-
-      resp(conn, 200, "ok")
-    else
-      resp(conn, 400, "invalid body")
     end
   end
 
