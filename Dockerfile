@@ -83,10 +83,9 @@ RUN wget -q "https://packages.microsoft.com/keys/microsoft.asc" -O- | apt-key ad
 RUN apt-get update && \
     apt-get install -y powershell
 
-#Install exchange management module 
+#Install exchange management module
 RUN pwsh -Command Install-Module -Name PSWSMan -Force -AcceptLicense  && \
     pwsh -Command Install-WSMan && \
-    pwsh -Command Set-ExecutionPolicy RemoteSigned && \
     pwsh -Command Install-Module  ExchangeOnlineManagement -Force -AcceptLicense
 
 
