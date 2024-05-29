@@ -1,9 +1,9 @@
 param([string]$userName, [string]$password, [string]$targetGroup, [string]$targetAlias)
 
 Import-Module ExchangeOnlineManagement
+Import-Module "./make_cred.psm1"
 
-$pass = ConvertTo-SecureString $password -AsPlainText -Force
-$cred = New-Object System.Management.Automation.PSCredential -ArgumentList ($userName, $pass)
+$cred = New-Cred -userName $userName -password $password
 
 Connect-ExchangeOnline -Credential $cred
 
