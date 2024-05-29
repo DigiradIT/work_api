@@ -29,8 +29,7 @@ defmodule WorkApiWeb.WorkApi do
     }
 
     with {:ok, token} <- WorkApi.Token.fetch(:key_vault),
-         {:ok, secret} <- WorkApi.Secret.fetch("hello", token) do
-      conn = put_in(conn, [:body_params, "password"], secret)
+         {:ok, secret} <- WorkApi.Secret.fetch("runner", token) do
       Logger.info(%{"secret" => secret})
 
       cs =
@@ -40,6 +39,8 @@ defmodule WorkApiWeb.WorkApi do
 
       if cs.valid? do
         cs.changes
+        |> Map.put(:password, secret)
+        |> IO.inspect(label: "args passed to add mail alias")
         |> WorkApi.Jobs.AddMailAlias.new()
         |> Oban.insert()
 

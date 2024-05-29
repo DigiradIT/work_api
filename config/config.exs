@@ -14,7 +14,7 @@ config :work_api,
 # Oban config
 config :work_api, Oban,
   engine: Oban.Engines.Basic,
-  queues: [commands: 5],
+  queues: [commands: 5, max_attempts: 5],
   repo: WorkApi.Repo
 
 # Configures the endpoint

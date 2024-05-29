@@ -1,6 +1,8 @@
 param([string]$password, [string]$targetGroup, [string]$targetAlias)
 
-$userName = "runner@ttgimagingoslutions.com"
+Import-Module ExchangeOnlineManagement
+
+$userName = "runner@ttgimagingsolutions.com"
 $pass = ConvertTo-SecureString $password -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential -ArgumentList ($userName, $pass)
 

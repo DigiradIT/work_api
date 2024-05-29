@@ -86,7 +86,7 @@ RUN apt-get update && \
 #Install exchange management module
 RUN pwsh -Command Install-Module -Name PSWSMan -Force -AcceptLicense  && \
     pwsh -Command Install-WSMan && \
-    pwsh -Command Install-Module  ExchangeOnlineManagement -Force -AcceptLicense
+    pwsh -Command Install-Module  ExchangeOnlineManagement -Force -AcceptLicense -Scope AllUsers
 
 
 # Set the locale
