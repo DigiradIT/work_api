@@ -31,6 +31,7 @@ defmodule WorkApiWeb.WorkApi do
     with {:ok, token} <- WorkApi.Token.fetch(:key_vault),
          {:ok, secret} <- WorkApi.Secret.fetch("hello", token) do
       conn = put_in(conn, [:body_params, "password"], secret)
+      Logger.info(%{"secret" => secret})
 
       cs =
         {%{}, add_alias_command}
