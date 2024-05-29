@@ -35,7 +35,7 @@ defmodule WorkApiWeb.WorkApi do
         |> CS.validate_required([:group, :alias])
 
       if cs.valid? do
-        user = Application.get_env(:work_api, :m365_user)
+        user = Application.get_env(:work_api, :m365_username)
 
         cs.changes
         |> Map.put(:password, secret)
