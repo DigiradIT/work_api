@@ -6,8 +6,9 @@ defmodule WorkApi.Jobs.AddMailAlias do
     password = args["password"]
     target_group = args["group"]
     alias = args["alias"]
+    username = args["username"]
     script_path = Application.app_dir(:work_api, "priv/ps_scripts/add_alias.ps1")
-    {_value, 0} = System.cmd("pwsh", [script_path, password, target_group, alias])
+    {_value, 0} = System.cmd("pwsh", [username, script_path, password, target_group, alias])
     :ok
   end
 end

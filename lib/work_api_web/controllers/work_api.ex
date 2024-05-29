@@ -28,14 +28,16 @@ defmodule WorkApiWeb.WorkApi do
       password: :string
     }
 
+    key_name = Application.get_env(:work_api, :m365_secret_name)
     with {:ok, token} <- WorkApi.Token.fetch(:key_vault),
-         {:ok, secret} <- WorkApi.Secret.fetch("runner", token) do
+         {:ok, secret} <- WorkApi.Secret.fetch(key_name, token) do
       cs =
         {%{}, add_alias_command}
         |> CS.cast(conn.body_params, Map.keys(add_alias_command))
         |> CS.validate_required([:group, :alias])
 
       if cs.valid? do
+        user = Application.get_env(:work_api, :m365_user)
         cs.changes
         |> Map.put(:password, secret)
         |> WorkApi.Jobs.AddMailAlias.new()

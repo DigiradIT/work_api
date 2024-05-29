@@ -57,9 +57,26 @@ if config_env() == :prod do
     to the API.
     """)
 
+  m365_username =
+    fetch_env_or_raise.("M365_USER", """
+    environment variable M365_USER is missing.
+    M365_USER should be set to the username for authenticating
+    to M365 when running tasks.
+    """)
+
+  m365_secret_name =
+    fetch_env_or_raise("M365_SECRET_NAME", """
+    environment variable M365_SECRET_NAME is missing.
+    M365_SECRET_NAME should be set to the name for the
+    secret containing the M365 user password.
+    """)
+
   config :work_api, :api_user, api_user
   config :work_api, :api_password, api_password
   config :work_api, :keyvault_url, keyvault_url
+  config :work_api, :m365_username, m365_username
+  config :work_api, :m365_secret_name, m365_secret_name
+
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :work_api, WorkApi.Repo,
