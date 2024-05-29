@@ -17,6 +17,8 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE} 
       KEYVAULT_URL: ${KEYVAULT_URL}
+      M365_USER: ${M365_USER}
+      M365_SECRET_NAME: ${M365_SECRET_NAME}
     depends_on:
       - db
       - proxy
